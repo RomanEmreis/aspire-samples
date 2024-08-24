@@ -14,7 +14,7 @@ description: "An example demonstrating how to configure a local SQL Server conta
 
 This sample demonstrates how to configure a SQL Server container to use a persistent volume mount in .NET Aspire, so that the data is persisted across app launches. This method can be used to persist data across instances of other container types configured in .NET Aspire apps too, e.g. PostgreSQL, Redis, etc.
 
-The app consists of a single service, **VolumeMount.BlazorWeb**, that is configured with a SQL Server container instance via the AppHost project. This Blazor Web app has been setup to use ASP.NET Core Identity for local user account registration and authentication, including the new [Blazor identity UI](https://devblogs.microsoft.com/dotnet/whats-new-with-identity-in-dotnet-8/#the-blazor-identity-ui). Using a persistent volume mount means that user accounts created when running locally are persisted across launches of the app.
+The app consists of a single service, **VolumeMount.BlazorWeb**, that is configured with a SQL Server container instance via the AppHost project. PostgreSQL and Azure Storage data services are also configured in the AppHost and Blazor projects for demonstration and experimentation purposes. This Blazor Web app has been setup to use ASP.NET Core Identity for local user account registration and authentication, including the new [Blazor identity UI](https://devblogs.microsoft.com/dotnet/whats-new-with-identity-in-dotnet-8/#the-blazor-identity-ui). Using a persistent volume mount means that user accounts created when running locally are persisted across launches of the app.
 
 ![Screenshot of the account login page on the web front](./images/volume-mount-frontend-login.png)
 
@@ -24,7 +24,7 @@ The app also includes a standard class library project, **VolumeMount.ServiceDef
 
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- **Optional** [Visual Studio 2022 17.9 Preview](https://visualstudio.microsoft.com/vs/preview/)
+- **Optional** [Visual Studio 2022 17.10](https://visualstudio.microsoft.com/vs/preview/)
 
 ## Running the app
 

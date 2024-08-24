@@ -1,24 +1,25 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿var builder = DistributedApplication.CreateBuilder(args);
 
-var builder = DistributedApplication.CreateBuilder(args);
+var sqlDatabase = builder.AddSqlServer("sqlserver")
+    .WithDataVolume()
+    .AddDatabase("sqldb");
 
-// Using a persistent volume mount requires a stable password for 'sa' rather than the default generated one.
-var sqlpassword = builder.Configuration["sqlpassword"];
+var postgresDatabase = builder.AddPostgres("postgresserver")
+    .WithDataVolume()
+    .AddDatabase("postgres");
 
-if (builder.Environment.IsDevelopment() && string.IsNullOrEmpty(sqlpassword))
-{
-    throw new InvalidOperationException("""
-        A password for the local SQL Server container is not configured.
-        Add one to the AppHost project's user secrets with the key 'sqlpassword', e.g. dotnet user-secrets set sqlpassword <password>
-        """);
-}
-
-// To have a persistent volume mount across container instances, it must be named (VolumeMountType.Named).
-var database = builder.AddSqlServerContainer("sqlserver", sqlpassword)
-    .WithVolumeMount("VolumeMount.sqlserver.data", "/var/opt/mssql", VolumeMountType.Named)
-    .AddDatabase("appdb");
+var blobs = builder.AddAzureStorage("Storage")
+    // Use the Azurite storage emulator for local development
+    .RunAsEmulator(emulator =>
+    {
+        emulator.WithImageTag("3.31.0") // workaround https://github.com/dotnet/aspire/issues/5078
+            .WithDataVolume();
+    })
+    .AddBlobs("BlobConnection");
 
 builder.AddProject<Projects.VolumeMount_BlazorWeb>("blazorweb")
-    .WithReference(database);
+    .WithReference(sqlDatabase)
+    .WithReference(postgresDatabase)
+    .WithReference(blobs);
 
 builder.Build().Run();
